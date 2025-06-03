@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
+<html>
+<head>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8">
+<title>Exported from Notepad++</title>
+<style type="text/css">
+span {
+	font-family: 'Courier New';
+	font-size: 10pt;
+	color: #000000;
+}
+.sc0 {
+}
+.sc2 {
+	color: #FF0000;
+}
+.sc3 {
+	color: #808080;
+}
+.sc4 {
+	color: #808080;
+}
+.sc5 {
+	font-weight: bold;
+	color: #0000FF;
+}
+.sc8 {
+	font-weight: bold;
+}
+.sc9 {
+	color: #FF00FF;
+}
+.sc10 {
+	font-weight: bold;
+	color: #000080;
+}
+.sc11 {
+}
+.sc14 {
+	font-weight: bold;
+	color: #880088;
+}
+.sc20 {
+	font-style: italic;
+	color: #FF8000;
+}
+</style>
+</head>
+<body>
+<div style="float: left; white-space: pre; line-height: 1; background: #FFFFFF; "><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">sys</span><span class="sc0">
+</span><span class="sc5">from</span><span class="sc0"> </span><span class="sc11">PyQt5</span><span class="sc10">.</span><span class="sc20">QtWidgets</span><span class="sc0"> </span><span class="sc5">import</span><span class="sc0"> </span><span class="sc10">(</span><span class="sc0">
+    </span><span class="sc11">QApplication</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QWidget</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QVBoxLayout</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidget</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">,</span><span class="sc0">
+    </span><span class="sc11">QPushButton</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QFileDialog</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QLabel</span><span class="sc0">
+</span><span class="sc10">)</span><span class="sc0">
+</span><span class="sc5">from</span><span class="sc0"> </span><span class="sc11">pymongo</span><span class="sc0"> </span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">MongoClient</span><span class="sc0">
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">matplotlib</span><span class="sc10">.</span><span class="sc20">pyplot</span><span class="sc0"> </span><span class="sc5">as</span><span class="sc0"> </span><span class="sc11">plt</span><span class="sc0">
+</span><span class="sc5">import</span><span class="sc0"> </span><span class="sc11">csv</span><span class="sc0">
+
+</span><span class="sc5">class</span><span class="sc0"> </span><span class="sc8">ProjektApp</span><span class="sc10">(</span><span class="sc11">QWidget</span><span class="sc10">):</span><span class="sc0">
+    </span><span class="sc5">def</span><span class="sc0"> </span><span class="sc9">__init__</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">):</span><span class="sc0">
+        </span><span class="sc14">super</span><span class="sc10">().</span><span class="sc20">__init__</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">setWindowTitle</span><span class="sc10">(</span><span class="sc3">"Zarządzanie projektami"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">resize</span><span class="sc10">(</span><span class="sc2">800</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">600</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">layout</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QVBoxLayout</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">setLayout</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">layout</span><span class="sc10">)</span><span class="sc0">
+
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QTableWidget</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">layout</span><span class="sc10">.</span><span class="sc20">addWidget</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">)</span><span class="sc0">
+
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">load_button</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QPushButton</span><span class="sc10">(</span><span class="sc3">"Załaduj dane"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">load_button</span><span class="sc10">.</span><span class="sc20">clicked</span><span class="sc10">.</span><span class="sc20">connect</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">load_data</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">layout</span><span class="sc10">.</span><span class="sc20">addWidget</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">load_button</span><span class="sc10">)</span><span class="sc0">
+
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">export_button</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QPushButton</span><span class="sc10">(</span><span class="sc3">"Eksportuj do CSV"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">export_button</span><span class="sc10">.</span><span class="sc20">clicked</span><span class="sc10">.</span><span class="sc20">connect</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">export_to_csv</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">layout</span><span class="sc10">.</span><span class="sc20">addWidget</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">export_button</span><span class="sc10">)</span><span class="sc0">
+
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">plot_button</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QPushButton</span><span class="sc10">(</span><span class="sc3">"Pokaż wykresy"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">plot_button</span><span class="sc10">.</span><span class="sc20">clicked</span><span class="sc10">.</span><span class="sc20">connect</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">show_charts</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">layout</span><span class="sc10">.</span><span class="sc20">addWidget</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">plot_button</span><span class="sc10">)</span><span class="sc0">
+
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">client</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">MongoClient</span><span class="sc10">(</span><span class="sc3">"mongodb://localhost:27017/"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">db</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">client</span><span class="sc10">[</span><span class="sc3">"projektyDB"</span><span class="sc10">]</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">collection</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">db</span><span class="sc10">[</span><span class="sc3">"projekty"</span><span class="sc10">]</span><span class="sc0">
+
+    </span><span class="sc5">def</span><span class="sc0"> </span><span class="sc9">load_data</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">):</span><span class="sc0">
+        </span><span class="sc11">projects</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc14">list</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">collection</span><span class="sc10">.</span><span class="sc20">find</span><span class="sc10">())</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setRowCount</span><span class="sc10">(</span><span class="sc14">len</span><span class="sc10">(</span><span class="sc11">projects</span><span class="sc10">))</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setColumnCount</span><span class="sc10">(</span><span class="sc2">6</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setHorizontalHeaderLabels</span><span class="sc10">(</span><span class="sc0">
+            </span><span class="sc10">[</span><span class="sc3">"Nazwa"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Status"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Termin"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Postęp (%)"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Budżet (PLN)"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Wydatki (PLN)"</span><span class="sc10">]</span><span class="sc0">
+        </span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">project</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc14">enumerate</span><span class="sc10">(</span><span class="sc11">projects</span><span class="sc10">):</span><span class="sc0">
+            </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setItem</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">0</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">(</span><span class="sc11">project</span><span class="sc10">[</span><span class="sc3">"nazwa"</span><span class="sc10">]))</span><span class="sc0">
+            </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setItem</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">1</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">(</span><span class="sc11">project</span><span class="sc10">[</span><span class="sc3">"status"</span><span class="sc10">]))</span><span class="sc0">
+            </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setItem</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">2</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">(</span><span class="sc11">project</span><span class="sc10">[</span><span class="sc3">"termin"</span><span class="sc10">]))</span><span class="sc0">
+            </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setItem</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">3</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">(</span><span class="sc14">str</span><span class="sc10">(</span><span class="sc11">project</span><span class="sc10">[</span><span class="sc3">"postep"</span><span class="sc10">])))</span><span class="sc0">
+            </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setItem</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">4</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">(</span><span class="sc14">str</span><span class="sc10">(</span><span class="sc11">project</span><span class="sc10">[</span><span class="sc3">"budzet"</span><span class="sc10">])))</span><span class="sc0">
+            </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">setItem</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc2">5</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">QTableWidgetItem</span><span class="sc10">(</span><span class="sc14">str</span><span class="sc10">(</span><span class="sc11">project</span><span class="sc10">[</span><span class="sc3">"wydatki"</span><span class="sc10">])))</span><span class="sc0">
+
+    </span><span class="sc5">def</span><span class="sc0"> </span><span class="sc9">export_to_csv</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">):</span><span class="sc0">
+        </span><span class="sc11">path</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">_</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QFileDialog</span><span class="sc10">.</span><span class="sc20">getSaveFileName</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Zapisz jako"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">""</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"CSV files (*.csv)"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc11">path</span><span class="sc10">:</span><span class="sc0">
+            </span><span class="sc5">with</span><span class="sc0"> </span><span class="sc14">open</span><span class="sc10">(</span><span class="sc11">path</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc4">'w'</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">newline</span><span class="sc10">=</span><span class="sc4">''</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">encoding</span><span class="sc10">=</span><span class="sc4">'utf-8'</span><span class="sc10">)</span><span class="sc0"> </span><span class="sc5">as</span><span class="sc0"> </span><span class="sc11">file</span><span class="sc10">:</span><span class="sc0">
+                </span><span class="sc11">writer</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">csv</span><span class="sc10">.</span><span class="sc20">writer</span><span class="sc10">(</span><span class="sc11">file</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc11">headers</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">[</span><span class="sc3">"Nazwa"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Status"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Termin"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Postęp (%)"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Budżet (PLN)"</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc3">"Wydatki (PLN)"</span><span class="sc10">]</span><span class="sc0">
+                </span><span class="sc11">writer</span><span class="sc10">.</span><span class="sc20">writerow</span><span class="sc10">(</span><span class="sc11">headers</span><span class="sc10">)</span><span class="sc0">
+                </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc11">row</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc14">range</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">rowCount</span><span class="sc10">()):</span><span class="sc0">
+                    </span><span class="sc11">data</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">[]</span><span class="sc0">
+                    </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc11">col</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc14">range</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">columnCount</span><span class="sc10">()):</span><span class="sc0">
+                        </span><span class="sc11">item</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">table</span><span class="sc10">.</span><span class="sc20">item</span><span class="sc10">(</span><span class="sc11">row</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">col</span><span class="sc10">)</span><span class="sc0">
+                        </span><span class="sc11">data</span><span class="sc10">.</span><span class="sc20">append</span><span class="sc10">(</span><span class="sc11">item</span><span class="sc10">.</span><span class="sc20">text</span><span class="sc10">()</span><span class="sc0"> </span><span class="sc5">if</span><span class="sc0"> </span><span class="sc11">item</span><span class="sc0"> </span><span class="sc5">else</span><span class="sc0"> </span><span class="sc3">""</span><span class="sc10">)</span><span class="sc0">
+                    </span><span class="sc11">writer</span><span class="sc10">.</span><span class="sc20">writerow</span><span class="sc10">(</span><span class="sc11">data</span><span class="sc10">)</span><span class="sc0">
+
+    </span><span class="sc5">def</span><span class="sc0"> </span><span class="sc9">show_charts</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">):</span><span class="sc0">
+        </span><span class="sc11">projects</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc14">list</span><span class="sc10">(</span><span class="sc11">self</span><span class="sc10">.</span><span class="sc20">collection</span><span class="sc10">.</span><span class="sc20">find</span><span class="sc10">())</span><span class="sc0">
+        </span><span class="sc11">names</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">[</span><span class="sc11">p</span><span class="sc10">[</span><span class="sc3">"nazwa"</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc11">p</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">projects</span><span class="sc10">]</span><span class="sc0">
+        </span><span class="sc11">postepy</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc10">[</span><span class="sc11">p</span><span class="sc10">[</span><span class="sc3">"postep"</span><span class="sc10">]</span><span class="sc0"> </span><span class="sc5">for</span><span class="sc0"> </span><span class="sc11">p</span><span class="sc0"> </span><span class="sc5">in</span><span class="sc0"> </span><span class="sc11">projects</span><span class="sc10">]</span><span class="sc0">
+
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">figure</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">bar</span><span class="sc10">(</span><span class="sc11">names</span><span class="sc10">,</span><span class="sc0"> </span><span class="sc11">postepy</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">xlabel</span><span class="sc10">(</span><span class="sc3">"Projekty"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">ylabel</span><span class="sc10">(</span><span class="sc3">"Postęp (%)"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">title</span><span class="sc10">(</span><span class="sc3">"Postęp projektów"</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">xticks</span><span class="sc10">(</span><span class="sc11">rotation</span><span class="sc10">=</span><span class="sc2">45</span><span class="sc10">)</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">tight_layout</span><span class="sc10">()</span><span class="sc0">
+        </span><span class="sc11">plt</span><span class="sc10">.</span><span class="sc20">show</span><span class="sc10">()</span><span class="sc0">
+
+</span><span class="sc5">if</span><span class="sc0"> </span><span class="sc11">__name__</span><span class="sc0"> </span><span class="sc10">==</span><span class="sc0"> </span><span class="sc3">"__main__"</span><span class="sc10">:</span><span class="sc0">
+    </span><span class="sc11">app</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">QApplication</span><span class="sc10">(</span><span class="sc11">sys</span><span class="sc10">.</span><span class="sc20">argv</span><span class="sc10">)</span><span class="sc0">
+    </span><span class="sc11">window</span><span class="sc0"> </span><span class="sc10">=</span><span class="sc0"> </span><span class="sc11">ProjektApp</span><span class="sc10">()</span><span class="sc0">
+    </span><span class="sc11">window</span><span class="sc10">.</span><span class="sc20">show</span><span class="sc10">()</span><span class="sc0">
+    </span><span class="sc11">sys</span><span class="sc10">.</span><span class="sc14">exit</span><span class="sc10">(</span><span class="sc11">app</span><span class="sc10">.</span><span class="sc20">exec_</span><span class="sc10">())</span><span class="sc0">
+</span></div></body>
+</html>
